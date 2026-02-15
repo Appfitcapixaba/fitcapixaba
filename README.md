@@ -392,3 +392,6 @@ Desenvolvido com 💪 para os capixabas que querem se cuidar sem sair de casa!
 **Versão:** 1.0.0  
 **Data:** Fevereiro 2026  
 **Status:** ✅ Pronto para Deploy
+**Versão:** 1.0.0  
+**Data:** Fevereiro 2026  
+**Status:** ✅ Pronto para Deploy
