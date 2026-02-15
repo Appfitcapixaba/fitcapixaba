@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitCapixaba - Seu Treino Personalizado</title>
     
-    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#0066CC">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
     
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
@@ -352,11 +350,33 @@
             padding: 3rem;
             text-align: center;
             margin-bottom: 2rem;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         
+        .exercise-visual {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+
+        .exercise-visual img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
         .exercise-emoji {
             font-size: 8rem;
-            margin-bottom: 1rem;
         }
         
         .exercise-name {
@@ -452,7 +472,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="header-content">
             <div class="logo">FITCAPIXABA</div>
@@ -463,7 +482,6 @@
         </div>
     </header>
     
-    <!-- Onboarding Screen -->
     <div id="onboardingScreen" class="container">
         <div class="onboarding">
             <h2>Vamos Começar! 🏖️</h2>
@@ -511,7 +529,6 @@
         </div>
     </div>
     
-    <!-- Dashboard -->
     <div id="dashboard" class="container dashboard">
         <div class="welcome-card">
             <h2 id="welcomeMessage">Bora Treinar, Capixaba!</h2>
@@ -547,12 +564,10 @@
         <div class="workouts-section">
             <h3>Seus Treinos Personalizados</h3>
             <div class="workouts-grid" id="workoutsGrid">
-                <!-- Workouts will be inserted here dynamically -->
-            </div>
+                </div>
         </div>
     </div>
     
-    <!-- Workout Player -->
     <div id="workoutPlayer" class="workout-player">
         <div class="player-header">
             <h3 id="playerTitle">Treino em Andamento</h3>
@@ -565,7 +580,9 @@
             </div>
             
             <div class="exercise-display">
-                <div class="exercise-emoji" id="exerciseEmoji">💪</div>
+                <div id="exerciseVisual" class="exercise-visual">
+                    <div id="exerciseEmoji" class="exercise-emoji">💪</div>
+                </div>
                 <h2 class="exercise-name" id="exerciseName">Exercício</h2>
                 <div class="timer" id="timer">00:30</div>
                 <p class="exercise-description" id="exerciseDescription">Descrição do exercício</p>
@@ -582,102 +599,101 @@
     <script>
         // Data Storage
         let userData = {};
-        let workoutData = [];
         let currentWorkout = [];
         let currentExerciseIndex = 0;
         let timerInterval = null;
         let timeLeft = 0;
         let isPaused = false;
         
-        // Exercise Database
+        // Exercise Database - ATUALIZADO COM CAMPO GIF
         const exercises = {
             '18-30': {
                 emagrecer: [
-                    { name: 'Burpees', emoji: '🔥', duration: 40, description: 'Burpees intensos para queimar calorias', calories: 10 },
-                    { name: 'Mountain Climbers', emoji: '⛰️', duration: 40, description: 'Escalada rápida no lugar', calories: 8 },
-                    { name: 'Jumping Jacks', emoji: '🤸', duration: 45, description: 'Polichinelos vigorosos', calories: 9 },
-                    { name: 'High Knees', emoji: '🦵', duration: 40, description: 'Joelhos altos em corrida estacionária', calories: 10 },
-                    { name: 'Agachamento Jump', emoji: '💥', duration: 30, description: 'Agachamento com salto explosivo', calories: 12 }
+                    { name: 'Burpees', emoji: '🔥', gif: 'gifs/burpees.gif', duration: 40, description: 'Burpees intensos para queimar calorias', calories: 10 },
+                    { name: 'Mountain Climbers', emoji: '⛰️', gif: 'gifs/mountain.gif', duration: 40, description: 'Escalada rápida no lugar', calories: 8 },
+                    { name: 'Jumping Jacks', emoji: '🤸', gif: 'gifs/jacks.gif', duration: 45, description: 'Polichinelos vigorosos', calories: 9 },
+                    { name: 'High Knees', emoji: '🦵', gif: 'gifs/knees.gif', duration: 40, description: 'Joelhos altos em corrida estacionária', calories: 10 },
+                    { name: 'Agachamento Jump', emoji: '💥', gif: 'gifs/sqjump.gif', duration: 30, description: 'Agachamento com salto explosivo', calories: 12 }
                 ],
                 tonificar: [
-                    { name: 'Flexões', emoji: '💪', duration: 30, description: 'Flexões tradicionais', calories: 7 },
-                    { name: 'Prancha', emoji: '🏋️', duration: 45, description: 'Prancha abdominal isométrica', calories: 5 },
-                    { name: 'Agachamento', emoji: '🦵', duration: 40, description: 'Agachamento profundo', calories: 8 },
-                    { name: 'Tríceps na Cadeira', emoji: '🪑', duration: 30, description: 'Mergulho de tríceps usando cadeira', calories: 6 },
-                    { name: 'Elevação de Perna', emoji: '🦿', duration: 35, description: 'Elevação lateral de perna', calories: 5 }
+                    { name: 'Flexões', emoji: '💪', gif: 'gifs/pushup.gif', duration: 30, description: 'Flexões tradicionais', calories: 7 },
+                    { name: 'Prancha', emoji: '🏋️', gif: 'gifs/plank.gif', duration: 45, description: 'Prancha abdominal isométrica', calories: 5 },
+                    { name: 'Agachamento', emoji: '🦵', gif: 'gifs/squat.gif', duration: 40, description: 'Agachamento profundo', calories: 8 },
+                    { name: 'Tríceps na Cadeira', emoji: '🪑', gif: 'gifs/triceps.gif', duration: 30, description: 'Mergulho de tríceps usando cadeira', calories: 6 },
+                    { name: 'Elevação de Perna', emoji: '🦿', gif: 'gifs/leglift.gif', duration: 35, description: 'Elevação lateral de perna', calories: 5 }
                 ],
                 condicionamento: [
-                    { name: 'Corrida Estacionária', emoji: '🏃', duration: 45, description: 'Correr no lugar em ritmo moderado', calories: 9 },
-                    { name: 'Jumping Jacks', emoji: '🤸', duration: 40, description: 'Polichinelos para cardio', calories: 8 },
-                    { name: 'Burpees Modificado', emoji: '💪', duration: 35, description: 'Burpees sem salto', calories: 7 },
-                    { name: 'Step Touch', emoji: '👟', duration: 40, description: 'Passos laterais rápidos', calories: 6 },
-                    { name: 'Prancha com Movimento', emoji: '🏋️', duration: 30, description: 'Prancha tocando ombros', calories: 7 }
+                    { name: 'Corrida Estacionária', emoji: '🏃', gif: 'gifs/run.gif', duration: 45, description: 'Correr no lugar em ritmo moderado', calories: 9 },
+                    { name: 'Jumping Jacks', emoji: '🤸', gif: 'gifs/jacks.gif', duration: 40, description: 'Polichinelos para cardio', calories: 8 },
+                    { name: 'Burpees Modificado', emoji: '💪', gif: 'gifs/burpee_mod.gif', duration: 35, description: 'Burpees sem salto', calories: 7 },
+                    { name: 'Step Touch', emoji: '👟', gif: 'gifs/step.gif', duration: 40, description: 'Passos laterais rápidos', calories: 6 },
+                    { name: 'Prancha com Movimento', emoji: '🏋️', gif: 'gifs/plank_move.gif', duration: 30, description: 'Prancha tocando ombros', calories: 7 }
                 ]
             },
             '31-45': {
                 emagrecer: [
-                    { name: 'Polichinelos', emoji: '🤸', duration: 35, description: 'Jumping jacks moderados', calories: 7 },
-                    { name: 'Step na Cadeira', emoji: '🪜', duration: 40, description: 'Subida e descida na cadeira', calories: 8 },
-                    { name: 'Marcha Rápida', emoji: '🚶‍♂️', duration: 45, description: 'Marcha no lugar com intensidade', calories: 6 },
-                    { name: 'Agachamento', emoji: '🦵', duration: 30, description: 'Agachamento controlado', calories: 7 },
-                    { name: 'Braços Abertos', emoji: '🤲', duration: 30, description: 'Abertura e fechamento de braços', calories: 5 }
+                    { name: 'Polichinelos', emoji: '🤸', gif: 'gifs/jacks.gif', duration: 35, description: 'Jumping jacks moderados', calories: 7 },
+                    { name: 'Step na Cadeira', emoji: '🪜', gif: 'gifs/chair_step.gif', duration: 40, description: 'Subida e descida na cadeira', calories: 8 },
+                    { name: 'Marcha Rápida', emoji: '🚶‍♂️', gif: 'gifs/fast_march.gif', duration: 45, description: 'Marcha no lugar com intensidade', calories: 6 },
+                    { name: 'Agachamento', emoji: '🦵', gif: 'gifs/squat.gif', duration: 30, description: 'Agachamento controlado', calories: 7 },
+                    { name: 'Braços Abertos', emoji: '🤲', gif: 'gifs/arms.gif', duration: 30, description: 'Abertura e fechamento de braços', calories: 5 }
                 ],
                 tonificar: [
-                    { name: 'Flexão de Joelho', emoji: '💪', duration: 25, description: 'Flexão com apoio nos joelhos', calories: 5 },
-                    { name: 'Prancha Modificada', emoji: '🏋️', duration: 30, description: 'Prancha com apoio nos joelhos', calories: 4 },
-                    { name: 'Agachamento na Parede', emoji: '🧱', duration: 30, description: 'Sentar na parede', calories: 6 },
-                    { name: 'Elevação de Braço', emoji: '🙌', duration: 30, description: 'Elevação lateral de braços', calories: 4 },
-                    { name: 'Ponte', emoji: '🌉', duration: 35, description: 'Elevação de quadril', calories: 5 }
+                    { name: 'Flexão de Joelho', emoji: '💪', gif: 'gifs/knee_pushup.gif', duration: 25, description: 'Flexão com apoio nos joelhos', calories: 5 },
+                    { name: 'Prancha Modificada', emoji: '🏋️', gif: 'gifs/knee_plank.gif', duration: 30, description: 'Prancha com apoio nos joelhos', calories: 4 },
+                    { name: 'Agachamento na Parede', emoji: '🧱', gif: 'gifs/wall_squat.gif', duration: 30, description: 'Sentar na parede', calories: 6 },
+                    { name: 'Elevação de Braço', emoji: '🙌', gif: 'gifs/arm_lift.gif', duration: 30, description: 'Elevação lateral de braços', calories: 4 },
+                    { name: 'Ponte', emoji: '🌉', gif: 'gifs/bridge.gif', duration: 35, description: 'Elevação de quadril', calories: 5 }
                 ],
                 condicionamento: [
-                    { name: 'Marcha Elevada', emoji: '🚶', duration: 45, description: 'Caminhar elevando joelhos', calories: 6 },
-                    { name: 'Step na Cadeira', emoji: '🪜', duration: 35, description: 'Subir e descer da cadeira', calories: 7 },
-                    { name: 'Braços e Pernas', emoji: '🤸‍♀️', duration: 40, description: 'Coordenação braços e pernas', calories: 6 },
-                    { name: 'Agachamento Dinâmico', emoji: '🦵', duration: 30, description: 'Agachar com movimento de braços', calories: 7 },
-                    { name: 'Torção de Tronco', emoji: '🔄', duration: 35, description: 'Girar tronco com movimento', calories: 5 }
+                    { name: 'Marcha Elevada', emoji: '🚶', gif: 'gifs/high_march.gif', duration: 45, description: 'Caminhar elevando joelhos', calories: 6 },
+                    { name: 'Step na Cadeira', emoji: '🪜', gif: 'gifs/chair_step.gif', duration: 35, description: 'Subir e descer da cadeira', calories: 7 },
+                    { name: 'Braços e Pernas', emoji: '🤸‍♀️', gif: 'gifs/arms_legs.gif', duration: 40, description: 'Coordenação braços e pernas', calories: 6 },
+                    { name: 'Agachamento Dinâmico', emoji: '🦵', gif: 'gifs/dyn_squat.gif', duration: 30, description: 'Agachar com movimento de braços', calories: 7 },
+                    { name: 'Torção de Tronco', emoji: '🔄', gif: 'gifs/twist.gif', duration: 35, description: 'Girar tronco com movimento', calories: 5 }
                 ]
             },
             '46-60': {
                 emagrecer: [
-                    { name: 'Marcha no Lugar', emoji: '🚶', duration: 45, description: 'Caminhada estacionária moderada', calories: 5 },
-                    { name: 'Elevação de Joelho', emoji: '🦵', duration: 40, description: 'Levantar joelhos alternados', calories: 4 },
-                    { name: 'Giro de Braços', emoji: '🔄', duration: 45, description: 'Círculos com os braços', calories: 3 },
-                    { name: 'Step Baixo', emoji: '👟', duration: 35, description: 'Passo para frente e trás', calories: 4 },
-                    { name: 'Alongamento Ativo', emoji: '🤸‍♀️', duration: 30, description: 'Alongamento com movimento', calories: 3 }
+                    { name: 'Marcha no Lugar', emoji: '🚶', gif: 'gifs/march.gif', duration: 45, description: 'Caminhada estacionária moderada', calories: 5 },
+                    { name: 'Elevação de Joelho', emoji: '🦵', gif: 'gifs/knee_lift.gif', duration: 40, description: 'Levantar joelhos alternados', calories: 4 },
+                    { name: 'Giro de Braços', emoji: '🔄', gif: 'gifs/arm_circle.gif', duration: 45, description: 'Círculos com os braços', calories: 3 },
+                    { name: 'Step Baixo', emoji: '👟', gif: 'gifs/step.gif', duration: 35, description: 'Passo para frente e trás', calories: 4 },
+                    { name: 'Alongamento Ativo', emoji: '🤸‍♀️', gif: 'gifs/stretch.gif', duration: 30, description: 'Alongamento com movimento', calories: 3 }
                 ],
                 tonificar: [
-                    { name: 'Sentar e Levantar', emoji: '🪑', duration: 30, description: 'Sentar e levantar da cadeira', calories: 4 },
-                    { name: 'Flexão na Parede', emoji: '🧱', duration: 25, description: 'Flexão vertical contra parede', calories: 3 },
-                    { name: 'Elevação de Perna', emoji: '🦿', duration: 30, description: 'Elevar perna para trás', calories: 3 },
-                    { name: 'Equilíbrio', emoji: '⚖️', duration: 30, description: 'Ficar em um pé só', calories: 2 },
-                    { name: 'Rotação de Tronco', emoji: '🔄', duration: 30, description: 'Girar o tronco suavemente', calories: 3 }
+                    { name: 'Sentar e Levantar', emoji: '🪑', gif: 'gifs/sit_stand.gif', duration: 30, description: 'Sentar e levantar da cadeira', calories: 4 },
+                    { name: 'Flexão na Parede', emoji: '🧱', gif: 'gifs/wall_pushup.gif', duration: 25, description: 'Flexão vertical contra parede', calories: 3 },
+                    { name: 'Elevação de Perna', emoji: '🦿', gif: 'gifs/leg_lift.gif', duration: 30, description: 'Elevar perna para trás', calories: 3 },
+                    { name: 'Equilíbrio', emoji: '⚖️', gif: 'gifs/balance.gif', duration: 30, description: 'Ficar em um pé só', calories: 2 },
+                    { name: 'Rotação de Tronco', emoji: '🔄', gif: 'gifs/twist.gif', duration: 30, description: 'Girar o tronco suavemente', calories: 3 }
                 ],
                 condicionamento: [
-                    { name: 'Caminhada Ativa', emoji: '🚶‍♀️', duration: 50, description: 'Caminhar no lugar com vigor', calories: 5 },
-                    { name: 'Movimentos de Braço', emoji: '💪', duration: 40, description: 'Círculos e elevações de braço', calories: 4 },
-                    { name: 'Step Suave', emoji: '👟', duration: 40, description: 'Passos para frente e trás', calories: 4 },
-                    { name: 'Alongamento Dinâmico', emoji: '🧘', duration: 35, description: 'Alongar com movimento suave', calories: 3 },
-                    { name: 'Equilíbrio Ativo', emoji: '⚖️', duration: 30, description: 'Exercícios de equilíbrio', calories: 3 }
+                    { name: 'Caminhada Ativa', emoji: '🚶‍♀️', gif: 'gifs/active_walk.gif', duration: 50, description: 'Caminhar no lugar com vigor', calories: 5 },
+                    { name: 'Movimentos de Braço', emoji: '💪', gif: 'gifs/arms.gif', duration: 40, description: 'Círculos e elevações de braço', calories: 4 },
+                    { name: 'Step Suave', emoji: '👟', gif: 'gifs/step.gif', duration: 40, description: 'Passos para frente e trás', calories: 4 },
+                    { name: 'Alongamento Dinâmico', emoji: '🧘', gif: 'gifs/stretch.gif', duration: 35, description: 'Alongar com movimento suave', calories: 3 },
+                    { name: 'Equilíbrio Ativo', emoji: '⚖️', gif: 'gifs/balance.gif', duration: 30, description: 'Exercícios de equilíbrio', calories: 3 }
                 ]
             },
             '60+': {
                 emagrecer: [
-                    { name: 'Caminhada Suave', emoji: '🚶‍♂️', duration: 60, description: 'Caminhar no lugar gentilmente', calories: 3 },
-                    { name: 'Balanço de Braços', emoji: '👋', duration: 45, description: 'Balançar braços suavemente', calories: 2 },
-                    { name: 'Giro Suave', emoji: '🔄', duration: 45, description: 'Rotações leves do corpo', calories: 2 },
-                    { name: 'Passo Lateral', emoji: '↔️', duration: 40, description: 'Passos laterais lentos', calories: 3 }
+                    { name: 'Caminhada Suave', emoji: '🚶‍♂️', gif: 'gifs/walk.gif', duration: 60, description: 'Caminhar no lugar gentilmente', calories: 3 },
+                    { name: 'Balanço de Braços', emoji: '👋', gif: 'gifs/arms.gif', duration: 45, description: 'Balançar braços suavemente', calories: 2 },
+                    { name: 'Giro Suave', emoji: '🔄', gif: 'gifs/twist.gif', duration: 45, description: 'Rotações leves do corpo', calories: 2 },
+                    { name: 'Passo Lateral', emoji: '↔️', gif: 'gifs/side_step.gif', duration: 40, description: 'Passos laterais lentos', calories: 3 }
                 ],
                 tonificar: [
-                    { name: 'Sentar na Cadeira', emoji: '🪑', duration: 30, description: 'Sentar e levantar devagar', calories: 2 },
-                    { name: 'Apoio na Parede', emoji: '🖐️', duration: 30, description: 'Pressionar a parede de leve', calories: 2 },
-                    { name: 'Flexão de Cotovelo', emoji: '💪', duration: 30, description: 'Dobrar e esticar braços', calories: 2 },
-                    { name: 'Alongamento Sentado', emoji: '🧘', duration: 45, description: 'Alongar sentado na cadeira', calories: 2 }
+                    { name: 'Sentar na Cadeira', emoji: '🪑', gif: 'gifs/sit_stand.gif', duration: 30, description: 'Sentar e levantar devagar', calories: 2 },
+                    { name: 'Apoio na Parede', emoji: '🖐️', gif: 'gifs/wall_pushup.gif', duration: 30, description: 'Pressionar a parede de leve', calories: 2 },
+                    { name: 'Flexão de Cotovelo', emoji: '💪', gif: 'gifs/arm_flex.gif', duration: 30, description: 'Dobrar e esticar braços', calories: 2 },
+                    { name: 'Alongamento Sentado', emoji: '🧘', gif: 'gifs/sit_stretch.gif', duration: 45, description: 'Alongar sentado na cadeira', calories: 2 }
                 ],
                 condicionamento: [
-                    { name: 'Caminhada Gentil', emoji: '🚶', duration: 60, description: 'Caminhar suavemente no lugar', calories: 3 },
-                    { name: 'Movimentos de Braço', emoji: '👋', duration: 45, description: 'Elevar e baixar braços devagar', calories: 2 },
-                    { name: 'Respiração Ativa', emoji: '💨', duration: 40, description: 'Respiração profunda com movimento', calories: 2 },
-                    { name: 'Equilíbrio Suave', emoji: '⚖️', duration: 30, description: 'Exercícios de equilíbrio com apoio', calories: 2 }
+                    { name: 'Caminhada Gentil', emoji: '🚶', gif: 'gifs/walk.gif', duration: 60, description: 'Caminhar suavemente no lugar', calories: 3 },
+                    { name: 'Movimentos de Braço', emoji: '👋', gif: 'gifs/arms.gif', duration: 45, description: 'Elevar e baixar braços devagar', calories: 2 },
+                    { name: 'Respiração Ativa', emoji: '💨', gif: 'gifs/breathe.gif', duration: 40, description: 'Respiração profunda com movimento', calories: 2 },
+                    { name: 'Equilíbrio Suave', emoji: '⚖️', gif: 'gifs/balance.gif', duration: 30, description: 'Exercícios de equilíbrio com apoio', calories: 2 }
                 ]
             }
         };
@@ -701,16 +717,10 @@
                     streak: 1
                 }
             };
-            
-            // Save to localStorage
             localStorage.setItem('fitcapixaba_user', JSON.stringify(userData));
-            
-            // Show dashboard
             document.getElementById('onboardingScreen').classList.add('hidden');
             document.getElementById('dashboard').style.display = 'block';
             document.getElementById('userInfo').style.display = 'flex';
-            
-            // Update UI
             updateDashboard();
             generateWorkouts();
         }
@@ -719,7 +729,6 @@
             document.getElementById('userName').textContent = userData.name;
             document.getElementById('userAvatar').textContent = userData.name.charAt(0).toUpperCase();
             document.getElementById('welcomeMessage').textContent = `E aí, ${userData.name}! Bora treinar?`;
-            
             const stats = userData.stats || { totalWorkouts: 0, totalMinutes: 0, totalCalories: 0, streak: 1 };
             document.getElementById('totalWorkouts').textContent = stats.totalWorkouts;
             document.getElementById('totalMinutes').textContent = stats.totalMinutes;
@@ -731,14 +740,11 @@
             const exerciseList = exercises[userData.age][userData.goal];
             const grid = document.getElementById('workoutsGrid');
             grid.innerHTML = '';
-            
-            // Generate 3 different workout types
             const workoutTypes = [
                 { name: 'Treino Rápido', time: 10, icon: '⚡', color: 'linear-gradient(135deg, #FF6B35, #FF5722)' },
                 { name: 'Treino Moderado', time: 20, icon: '🔥', color: 'linear-gradient(135deg, #0066CC, #004999)' },
                 { name: 'Treino Completo', time: 30, icon: '💪', color: 'linear-gradient(135deg, #2ECC71, #27AE60)' }
             ];
-            
             workoutTypes.forEach(type => {
                 const card = document.createElement('div');
                 card.className = 'workout-card';
@@ -764,19 +770,17 @@
         function startWorkout(duration) {
             const exerciseList = exercises[userData.age][userData.goal];
             const numExercises = Math.ceil(duration / 3);
-            
-            // Select random exercises
             currentWorkout = [];
             for (let i = 0; i < numExercises; i++) {
                 const randomIndex = Math.floor(Math.random() * exerciseList.length);
                 currentWorkout.push({...exerciseList[randomIndex]});
             }
-            
             currentExerciseIndex = 0;
             document.getElementById('workoutPlayer').style.display = 'block';
             playExercise();
         }
         
+        // FUNÇÃO PLAY ATUALIZADA - LÓGICA DE TROCA GIF/EMOJI
         function playExercise() {
             if (currentExerciseIndex >= currentWorkout.length) {
                 finishWorkout();
@@ -784,7 +788,15 @@
             }
             
             const exercise = currentWorkout[currentExerciseIndex];
-            document.getElementById('exerciseEmoji').textContent = exercise.emoji;
+            const visualArea = document.getElementById('exerciseEmoji');
+            
+            // CIRURGIA: Se o GIF existir e não for o padrão vazio, mostra o GIF. Senão, mostra o Emoji.
+            if (exercise.gif && exercise.gif !== '') {
+                visualArea.innerHTML = `<img src="${exercise.gif}" alt="${exercise.name}" onerror="this.parentElement.innerHTML='${exercise.emoji}'">`;
+            } else {
+                visualArea.innerHTML = exercise.emoji;
+            }
+
             document.getElementById('exerciseName').textContent = exercise.name;
             document.getElementById('exerciseDescription').textContent = exercise.description;
             
@@ -792,15 +804,14 @@
             updateTimer();
             
             isPaused = false;
+            if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
                 if (!isPaused) {
                     timeLeft--;
                     updateTimer();
-                    
                     if (timeLeft <= 0) {
                         clearInterval(timerInterval);
                         currentExerciseIndex++;
-                        
                         if (currentExerciseIndex < currentWorkout.length) {
                             setTimeout(() => playExercise(), 1000);
                         } else {
@@ -809,15 +820,13 @@
                     }
                 }
             }, 1000);
-            
             updateProgress();
         }
         
         function updateTimer() {
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;
-            document.getElementById('timer').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
         
         function updateProgress() {
@@ -833,7 +842,6 @@
         function skipExercise() {
             clearInterval(timerInterval);
             currentExerciseIndex++;
-            
             if (currentExerciseIndex < currentWorkout.length) {
                 playExercise();
             } else {
@@ -848,26 +856,17 @@
         
         function finishWorkout() {
             clearInterval(timerInterval);
-            
-            // Update stats
             const totalTime = currentWorkout.reduce((sum, ex) => sum + ex.duration, 0) / 60;
             const totalCals = currentWorkout.reduce((sum, ex) => sum + ex.calories, 0);
-            
             userData.stats.totalWorkouts++;
             userData.stats.totalMinutes += Math.round(totalTime);
             userData.stats.totalCalories += totalCals;
-            
-            // Save
             localStorage.setItem('fitcapixaba_user', JSON.stringify(userData));
-            
-            alert('🎉 Parabéns, capixaba! Você é cana! 💪\n\nTreino concluído com sucesso!\n' +
-                  `Tempo: ${Math.round(totalTime)} min\nCalorias: ${totalCals} kcal`);
-            
+            alert('🎉 Parabéns, capixaba! Você é cana! 💪\n\nTreino concluído com sucesso!');
             closePlayer();
             updateDashboard();
         }
         
-        // Check for existing user
         window.onload = () => {
             const saved = localStorage.getItem('fitcapixaba_user');
             if (saved) {
