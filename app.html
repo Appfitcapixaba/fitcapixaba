@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitCapixaba - Seu Treino Personalizado</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0066CC">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --azul-es: #0066CC;
+            --laranja-es: #FF6B35;
+            --verde-es: #2ECC71;
+            --branco: #FFFFFF;
+            --cinza-claro: #F5F7FA;
+            --cinza-escuro: #2C3E50;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--cinza-claro);
+            color: var(--cinza-escuro);
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--azul-es), #004999);
+            color: var(--branco);
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            letter-spacing: 2px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--laranja-es);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        /* Onboarding Screen */
+        .onboarding {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .onboarding h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: var(--azul-es);
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+        
+        .onboarding p {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+        }
+        
+        .form-group {
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--cinza-escuro);
+        }
+        
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--azul-es);
+        }
+        
+        .btn {
+            background: var(--laranja-es);
+            color: var(--branco);
+            padding: 1.2rem 3rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.5);
+        }
+        
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, var(--azul-es), #004999);
+            color: var(--branco);
+            padding: 3rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-card::before {
+            content: '💪';
+            position: absolute;
+            font-size: 10rem;
+            top: -3rem;
+            right: -3rem;
+            opacity: 0.1;
+        }
+        
+        .welcome-card h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+        }
+        
+        .welcome-card p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: var(--branco);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--azul-es);
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--cinza-escuro);
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+        
+        .workouts-section h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2rem;
+            color: var(--azul-es);
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+        }
+        
+        .workouts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .workout-card {
+            background: var(--branco);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .workout-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 102, 204, 0.15);
+        }
+        
+        .workout-image {
+            height: 200px;
+            background: linear-gradient(135deg, var(--azul-es), var(--verde-es));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+        }
+        
+        .workout-duration {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            color: var(--azul-es);
+            font-size: 0.9rem;
+        }
+        
+        .workout-content {
+            padding: 1.5rem;
+        }
+        
+        .workout-content h4 {
+            font-size: 1.3rem;
+            color: var(--azul-es);
+            margin-bottom: 0.5rem;
+        }
+        
+        .workout-content p {
+            color: var(--cinza-escuro);
+            opacity: 0.7;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .workout-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--cinza-escuro);
+        }
+        
+        .workout-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        /* Workout Player */
+        .workout-player {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--cinza-escuro);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .player-header {
+            background: var(--azul-es);
+            color: var(--branco);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .btn-close {
+            background: none;
+            border: none;
+            color: var(--branco);
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        .player-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .exercise-display {
+            background: var(--branco);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .exercise-emoji {
+            font-size: 8rem;
+            margin-bottom: 1rem;
+        }
+        
+        .exercise-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3rem;
+            color: var(--azul-es);
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+        
+        .timer {
+            font-size: 6rem;
+            font-weight: 700;
+            color: var(--laranja-es);
+            margin: 2rem 0;
+            line-height: 1;
+        }
+        
+        .exercise-description {
+            font-size: 1.1rem;
+            color: var(--cinza-escuro);
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+        
+        .player-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .btn-control {
+            background: var(--azul-es);
+            color: var(--branco);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-control:hover {
+            background: #004999;
+            transform: translateY(-3px);
+        }
+        
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.2);
+            height: 10px;
+            border-radius: 10px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: var(--verde-es);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+        
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .welcome-card {
+                padding: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .workouts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .timer {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">FITCAPIXABA</div>
+            <div class="user-info" id="userInfo" style="display: none;">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <span id="userName">Usuário</span>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Onboarding Screen -->
+    <div id="onboardingScreen" class="container">
+        <div class="onboarding">
+            <h2>Vamos Começar! 🏖️</h2>
+            <p>Responda algumas perguntinhas pra gente montar seu treino perfeito, capixaba!</p>
+            
+            <form id="onboardingForm">
+                <div class="form-group">
+                    <label for="userName">Como posso te chamar?</label>
+                    <input type="text" id="userNameInput" placeholder="Seu nome" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userAge">Qual sua faixa etária?</label>
+                    <select id="userAge" required>
+                        <option value="">Escolha...</option>
+                        <option value="18-30">18 a 30 anos</option>
+                        <option value="31-45">31 a 45 anos</option>
+                        <option value="46-60">46 a 60 anos</option>
+                        <option value="60+">60+ anos</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userGoal">Qual seu objetivo principal?</label>
+                    <select id="userGoal" required>
+                        <option value="">Escolha...</option>
+                        <option value="emagrecer">🔥 Emagrecer</option>
+                        <option value="tonificar">💪 Tonificar</option>
+                        <option value="condicionamento">❤️ Melhorar Condicionamento</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="userTime">Quanto tempo você tem por dia?</label>
+                    <select id="userTime" required>
+                        <option value="">Escolha...</option>
+                        <option value="10">10 minutos (Express)</option>
+                        <option value="20">20 minutos (Moderado)</option>
+                        <option value="30">30 minutos (Completo)</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn">Bora Treinar! 💪</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Dashboard -->
+    <div id="dashboard" class="container dashboard">
+        <div class="welcome-card">
+            <h2 id="welcomeMessage">Bora Treinar, Capixaba!</h2>
+            <p id="motivationalMessage">Você é cana! Vamos continuar sua jornada de transformação! 💪</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-value" id="totalWorkouts">0</div>
+                <div class="stat-label">Treinos Completos</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-value" id="totalMinutes">0</div>
+                <div class="stat-label">Minutos Treinados</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-value" id="totalCalories">0</div>
+                <div class="stat-label">Calorias Queimadas</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value" id="streak">0</div>
+                <div class="stat-label">Dias Seguidos</div>
+            </div>
+        </div>
+        
+        <div class="workouts-section">
+            <h3>Seus Treinos Personalizados</h3>
+            <div class="workouts-grid" id="workoutsGrid">
+                <!-- Workouts will be inserted here dynamically -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Workout Player -->
+    <div id="workoutPlayer" class="workout-player">
+        <div class="player-header">
+            <h3 id="playerTitle">Treino em Andamento</h3>
+            <button class="btn-close" onclick="closePlayer()">×</button>
+        </div>
+        
+        <div class="player-content">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="exercise-display">
+                <div class="exercise-emoji" id="exerciseEmoji">💪</div>
+                <h2 class="exercise-name" id="exerciseName">Exercício</h2>
+                <div class="timer" id="timer">00:30</div>
+                <p class="exercise-description" id="exerciseDescription">Descrição do exercício</p>
+            </div>
+            
+            <div class="player-controls">
+                <button class="btn-control" onclick="skipExercise()">⏭️ Pular</button>
+                <button class="btn-control" id="pauseBtn" onclick="togglePause()">⏸️ Pausar</button>
+                <button class="btn-control" onclick="closePlayer()">⏹️ Encerrar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Data Storage
+        let userData = {};
+        let workoutData = [];
+        let currentWorkout = [];
+        let currentExerciseIndex = 0;
+        let timerInterval = null;
+        let timeLeft = 0;
+        let isPaused = false;
+        
+        // Exercise Database
+        const exercises = {
+            '18-30': {
+                emagrecer: [
+                    { name: 'Burpees', emoji: '🔥', duration: 40, description: 'Burpees intensos para queimar calorias', calories: 10 },
+                    { name: 'Mountain Climbers', emoji: '⛰️', duration: 40, description: 'Escalada rápida no lugar', calories: 8 },
+                    { name: 'Jumping Jacks', emoji: '🤸', duration: 45, description: 'Polichinelos vigorosos', calories: 9 },
+                    { name: 'High Knees', emoji: '🦵', duration: 40, description: 'Joelhos altos em corrida estacionária', calories: 10 },
+                    { name: 'Agachamento Jump', emoji: '💥', duration: 30, description: 'Agachamento com salto explosivo', calories: 12 }
+                ],
+                tonificar: [
+                    { name: 'Flexões', emoji: '💪', duration: 30, description: 'Flexões tradicionais', calories: 7 },
+                    { name: 'Prancha', emoji: '🏋️', duration: 45, description: 'Prancha abdominal isométrica', calories: 5 },
+                    { name: 'Agachamento', emoji: '🦵', duration: 40, description: 'Agachamento profundo', calories: 8 },
+                    { name: 'Tríceps na Cadeira', emoji: '🪑', duration: 30, description: 'Mergulho de tríceps usando cadeira', calories: 6 },
+                    { name: 'Elevação de Perna', emoji: '🦿', duration: 35, description: 'Elevação lateral de perna', calories: 5 }
+                ]
+            },
+            '31-45': {
+                emagrecer: [
+                    { name: 'Polichinelos', emoji: '🤸', duration: 35, description: 'Jumping jacks moderados', calories: 7 },
+                    { name: 'Step na Cadeira', emoji: '🪜', duration: 40, description: 'Subida e descida na cadeira', calories: 8 },
+                    { name: 'Marcha Rápida', emoji: '🚶‍♂️', duration: 45, description: 'Marcha no lugar com intensidade', calories: 6 },
+                    { name: 'Agachamento', emoji: '🦵', duration: 30, description: 'Agachamento controlado', calories: 7 },
+                    { name: 'Braços Abertos', emoji: '🤲', duration: 30, description: 'Abertura e fechamento de braços', calories: 5 }
+                ],
+                tonificar: [
+                    { name: 'Flexão de Joelho', emoji: '💪', duration: 25, description: 'Flexão com apoio nos joelhos', calories: 5 },
+                    { name: 'Prancha Modificada', emoji: '🏋️', duration: 30, description: 'Prancha com apoio nos joelhos', calories: 4 },
+                    { name: 'Agachamento na Parede', emoji: '🧱', duration: 30, description: 'Sentar na parede', calories: 6 },
+                    { name: 'Elevação de Braço', emoji: '🙌', duration: 30, description: 'Elevação lateral de braços', calories: 4 },
+                    { name: 'Ponte', emoji: '🌉', duration: 35, description: 'Elevação de quadril', calories: 5 }
+                ]
+            },
+            '46-60': {
+                emagrecer: [
+                    { name: 'Marcha no Lugar', emoji: '🚶', duration: 45, description: 'Caminhada estacionária moderada', calories: 5 },
+                    { name: 'Elevação de Joelho', emoji: '🦵', duration: 40, description: 'Levantar joelhos alternados', calories: 4 },
+                    { name: 'Giro de Braços', emoji: '🔄', duration: 45, description: 'Círculos com os braços', calories: 3 },
+                    { name: 'Step Baixo', emoji: '👟', duration: 35, description: 'Passo para frente e trás', calories: 4 },
+                    { name: 'Alongamento Ativo', emoji: '🤸‍♀️', duration: 30, description: 'Alongamento com movimento', calories: 3 }
+                ],
+                tonificar: [
+                    { name: 'Sentar e Levantar', emoji: '🪑', duration: 30, description: 'Sentar e levantar da cadeira', calories: 4 },
+                    { name: 'Flexão na Parede', emoji: '🧱', duration: 25, description: 'Flexão vertical contra parede', calories: 3 },
+                    { name: 'Elevação de Perna', emoji: '🦿', duration: 30, description: 'Elevar perna para trás', calories: 3 },
+                    { name: 'Equilíbrio', emoji: '⚖️', duration: 30, description: 'Ficar em um pé só', calories: 2 },
+                    { name: 'Rotação de Tronco', emoji: '🔄', duration: 30, description: 'Girar o tronco suavemente', calories: 3 }
+                ]
+            },
+            '60+': {
+                emagrecer: [
+                    { name: 'Caminhada Suave', emoji: '🚶‍♂️', duration: 60, description: 'Caminhar no lugar gentilmente', calories: 3 },
+                    { name: 'Balanço de Braços', emoji: '👋', duration: 45, description: 'Balançar braços suavemente', calories: 2 },
+                    { name: 'Giro Suave', emoji: '🔄', duration: 45, description: 'Rotações leves do corpo', calories: 2 },
+                    { name: 'Passo Lateral', emoji: '↔️', duration: 40, description: 'Passos laterais lentos', calories: 3 }
+                ],
+                tonificar: [
+                    { name: 'Sentar na Cadeira', emoji: '🪑', duration: 30, description: 'Sentar e levantar devagar', calories: 2 },
+                    { name: 'Apoio na Parede', emoji: '🖐️', duration: 30, description: 'Pressionar a parede de leve', calories: 2 },
+                    { name: 'Flexão de Cotovelo', emoji: '💪', duration: 30, description: 'Dobrar e esticar braços', calories: 2 },
+                    { name: 'Alongamento Sentado', emoji: '🧘', duration: 45, description: 'Alongar sentado na cadeira', calories: 2 }
+                ]
+            }
+        };
+        
+        // Initialize
+        document.getElementById('onboardingForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            startApp();
+        });
+        
+        function startApp() {
+            userData = {
+                name: document.getElementById('userNameInput').value,
+                age: document.getElementById('userAge').value,
+                goal: document.getElementById('userGoal').value,
+                time: parseInt(document.getElementById('userTime').value),
+                stats: {
+                    totalWorkouts: 0,
+                    totalMinutes: 0,
+                    totalCalories: 0,
+                    streak: 1
+                }
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('fitcapixaba_user', JSON.stringify(userData));
+            
+            // Show dashboard
+            document.getElementById('onboardingScreen').classList.add('hidden');
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('userInfo').style.display = 'flex';
+            
+            // Update UI
+            updateDashboard();
+            generateWorkouts();
+        }
+        
+        function updateDashboard() {
+            document.getElementById('userName').textContent = userData.name;
+            document.getElementById('userAvatar').textContent = userData.name.charAt(0).toUpperCase();
+            document.getElementById('welcomeMessage').textContent = `E aí, ${userData.name}! Bora treinar?`;
+            
+            const stats = userData.stats || { totalWorkouts: 0, totalMinutes: 0, totalCalories: 0, streak: 1 };
+            document.getElementById('totalWorkouts').textContent = stats.totalWorkouts;
+            document.getElementById('totalMinutes').textContent = stats.totalMinutes;
+            document.getElementById('totalCalories').textContent = stats.totalCalories;
+            document.getElementById('streak').textContent = stats.streak;
+        }
+        
+        function generateWorkouts() {
+            const exerciseList = exercises[userData.age][userData.goal];
+            const grid = document.getElementById('workoutsGrid');
+            grid.innerHTML = '';
+            
+            // Generate 3 different workout types
+            const workoutTypes = [
+                { name: 'Treino Rápido', time: 10, icon: '⚡', color: 'linear-gradient(135deg, #FF6B35, #FF5722)' },
+                { name: 'Treino Moderado', time: 20, icon: '🔥', color: 'linear-gradient(135deg, #0066CC, #004999)' },
+                { name: 'Treino Completo', time: 30, icon: '💪', color: 'linear-gradient(135deg, #2ECC71, #27AE60)' }
+            ];
+            
+            workoutTypes.forEach(type => {
+                const card = document.createElement('div');
+                card.className = 'workout-card';
+                card.innerHTML = `
+                    <div class="workout-image" style="background: ${type.color}">
+                        <span>${type.icon}</span>
+                        <div class="workout-duration">${type.time} min</div>
+                    </div>
+                    <div class="workout-content">
+                        <h4>${type.name}</h4>
+                        <p>Treino personalizado para ${userData.age} anos com foco em ${userData.goal}</p>
+                        <div class="workout-meta">
+                            <span>🔥 ~${type.time * 6} calorias</span>
+                            <span>💪 ${Math.ceil(type.time / 3)} exercícios</span>
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => startWorkout(type.time);
+                grid.appendChild(card);
+            });
+        }
+        
+        function startWorkout(duration) {
+            const exerciseList = exercises[userData.age][userData.goal];
+            const numExercises = Math.ceil(duration / 3);
+            
+            // Select random exercises
+            currentWorkout = [];
+            for (let i = 0; i < numExercises; i++) {
+                const randomIndex = Math.floor(Math.random() * exerciseList.length);
+                currentWorkout.push({...exerciseList[randomIndex]});
+            }
+            
+            currentExerciseIndex = 0;
+            document.getElementById('workoutPlayer').style.display = 'block';
+            playExercise();
+        }
+        
+        function playExercise() {
+            if (currentExerciseIndex >= currentWorkout.length) {
+                finishWorkout();
+                return;
+            }
+            
+            const exercise = currentWorkout[currentExerciseIndex];
+            document.getElementById('exerciseEmoji').textContent = exercise.emoji;
+            document.getElementById('exerciseName').textContent = exercise.name;
+            document.getElementById('exerciseDescription').textContent = exercise.description;
+            
+            timeLeft = exercise.duration;
+            updateTimer();
+            
+            isPaused = false;
+            timerInterval = setInterval(() => {
+                if (!isPaused) {
+                    timeLeft--;
+                    updateTimer();
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        currentExerciseIndex++;
+                        
+                        if (currentExerciseIndex < currentWorkout.length) {
+                            setTimeout(() => playExercise(), 1000);
+                        } else {
+                            finishWorkout();
+                        }
+                    }
+                }
+            }, 1000);
+            
+            updateProgress();
+        }
+        
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        function updateProgress() {
+            const progress = (currentExerciseIndex / currentWorkout.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+        
+        function togglePause() {
+            isPaused = !isPaused;
+            document.getElementById('pauseBtn').textContent = isPaused ? '▶️ Continuar' : '⏸️ Pausar';
+        }
+        
+        function skipExercise() {
+            clearInterval(timerInterval);
+            currentExerciseIndex++;
+            
+            if (currentExerciseIndex < currentWorkout.length) {
+                playExercise();
+            } else {
+                finishWorkout();
+            }
+        }
+        
+        function closePlayer() {
+            clearInterval(timerInterval);
+            document.getElementById('workoutPlayer').style.display = 'none';
+        }
+        
+        function finishWorkout() {
+            clearInterval(timerInterval);
+            
+            // Update stats
+            const totalTime = currentWorkout.reduce((sum, ex) => sum + ex.duration, 0) / 60;
+            const totalCals = currentWorkout.reduce((sum, ex) => sum + ex.calories, 0);
+            
+            userData.stats.totalWorkouts++;
+            userData.stats.totalMinutes += Math.round(totalTime);
+            userData.stats.totalCalories += totalCals;
+            
+            // Save
+            localStorage.setItem('fitcapixaba_user', JSON.stringify(userData));
+            
+            alert('🎉 Parabéns, capixaba! Você é cana! 💪\n\nTreino concluído com sucesso!\n' +
+                  `Tempo: ${Math.round(totalTime)} min\nCalorias: ${totalCals} kcal`);
+            
+            closePlayer();
+            updateDashboard();
+        }
+        
+        // Check for existing user
+        window.onload = () => {
+            const saved = localStorage.getItem('fitcapixaba_user');
+            if (saved) {
+                userData = JSON.parse(saved);
+                document.getElementById('onboardingScreen').classList.add('hidden');
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('userInfo').style.display = 'flex';
+                updateDashboard();
+                generateWorkouts();
+            }
+        };
+    </script>
+</body>
+</html>
